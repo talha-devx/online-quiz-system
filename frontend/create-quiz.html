@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Create Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<h1>📚 Create Full Quiz</h1>
+
+<input type="text"
+       id="title"
+       placeholder="Quiz Title">
+
+<input type="text"
+       id="description"
+       placeholder="Quiz Description">
+
+<input type="number"
+       id="marks"
+       placeholder="Total Marks">
+
+<input type="number"
+       id="questionCount"
+       placeholder="Number Of Questions">
+
+<button onclick="generateQuestions()">
+    Generate Questions
+</button>
+
+<br><br>
+
+<div id="questionsContainer"></div>
+
+<br>
+
+<button onclick="saveQuiz()">
+    💾 Save Quiz
+</button>
+
+<p id="message"></p>
+
+<br>
+
+<button onclick="window.location.href='teacher-dashboard.html'">
+    ← Back To Dashboard
+</button>
+```
+
+</div>
+
+<script>
+
+function generateQuestions(){
+
+    const count =
+        parseInt(
+            document.getElementById(
+                "questionCount"
+            ).value
+        );
+
+    if(!count){
+
+        alert(
+            "Enter Number Of Questions"
+        );
+
+        return;
+    }
+
+    let html = "";
+
+    for(let i = 1; i <= count; i++){
+
+        html += `
+
+        <div class="card">
+
+            <h2>Question ${i}</h2>
+
+            <input
+                type="text"
+                id="question${i}"
+                placeholder="Question">
+
+            <input
+                type="text"
+                id="option1_${i}"
+                placeholder="Option A">
+
+            <input
+                type="text"
+                id="option2_${i}"
+                placeholder="Option B">
+
+            <input
+                type="text"
+                id="option3_${i}"
+                placeholder="Option C">
+
+            <input
+                type="text"
+                id="option4_${i}"
+                placeholder="Option D">
+
+            <input
+                type="text"
+                id="correct_${i}"
+                placeholder="Correct Answer">
+
+        </div>
+
+        <br>
+
+        `;
+    }
+
+    document.getElementById(
+        "questionsContainer"
+    ).innerHTML = html;
+}
+
+async function saveQuiz(){
+
+    const count =
+        parseInt(
+            document.getElementById(
+                "questionCount"
+            ).value
+        );
+
+    let questions = [];
+
+    for(let i = 1; i <= count; i++){
+
+        questions.push({
+
+            question:
+                document.getElementById(
+                    `question${i}`
+                ).value,
+
+            options:[
+
+                document.getElementById(
+                    `option1_${i}`
+                ).value,
+
+                document.getElementById(
+                    `option2_${i}`
+                ).value,
+
+                document.getElementById(
+                    `option3_${i}`
+                ).value,
+
+                document.getElementById(
+                    `option4_${i}`
+                ).value
+            ],
+
+            correct_answer:
+                document.getElementById(
+                    `correct_${i}`
+                ).value
+        });
+    }
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/create-full-quiz",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                    "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    title:
+                        document.getElementById(
+                            "title"
+                        ).value,
+
+                    description:
+                        document.getElementById(
+                            "description"
+                        ).value,
+
+                    total_marks:
+                        document.getElementById(
+                            "marks"
+                        ).value,
+
+                    questions:
+                        questions
+                })
+            }
+        );
+
+    const data =
+        await response.json();
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        data.message;
+
+    if(
+        data.message ===
+        "Quiz and Questions saved successfully"
+    ){
+
+        alert(
+            "Quiz Created Successfully!"
+        );
+    }
+}
+
+</script>
+
+</body>
+</html>

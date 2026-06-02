@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>👨‍🏫 Teacher Dashboard</h1>
+
+    <h2 id="welcome"></h2>
+
+    <button class="dashboard-btn"
+        onclick="window.location.href='create-quiz.html'">
+        ➕ Create Quiz
+    </button>
+
+
+    <button class="dashboard-btn"
+        onclick="window.location.href='view-results.html'">
+        📊 View Results
+    </button>
+
+    <button class="dashboard-btn"
+        onclick="window.location.href='manage-quizzes.html'">
+        📚 Manage Quizzes
+    </button>
+
+    <button class="dashboard-btn"
+        onclick="window.location.href='analytics.html'">
+        📈 Analytics
+    </button>
+
+    <button class="dashboard-btn"
+        onclick="logout()">
+        🚪 Logout
+    </button>
+
+</div>
+
+<script>
+
+const teacher =
+    localStorage.getItem("teacherName");
+
+document.getElementById("welcome")
+    .innerText = "Welcome, " + teacher;
+
+function logout(){
+
+    localStorage.removeItem("teacherName");
+
+    window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>

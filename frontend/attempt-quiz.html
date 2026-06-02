@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attempt Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📝 Quiz</h1>
+
+    <h2 id="questionNumber"></h2>
+
+    <h3 id="question"></h3>
+
+    <div id="options"></div>
+
+    <br>
+
+    <button onclick="previousQuestion()">
+        ⬅ Previous
+    </button>
+
+    <button onclick="nextQuestion()">
+        Next ➡
+    </button>
+
+    <button onclick="submitQuiz()">
+        ✅ Submit Quiz
+    </button>
+
+</div>
+
+<script>
+
+let questions = [];
+
+let currentIndex = 0;
+
+let answers = {};
+
+const selectedQuiz =
+    localStorage.getItem(
+        "selectedQuiz"
+    );
+
+async function loadQuiz(){
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/quiz-questions/" +
+            encodeURIComponent(selectedQuiz)
+        );
+
+    questions =
+        await response.json();
+
+    showQuestion();
+}
+
+function showQuestion(){
+
+    const question =
+        questions[currentIndex];
+
+    document.getElementById(
+        "questionNumber"
+    ).innerText =
+        `Question ${currentIndex + 1} of ${questions.length}`;
+
+    document.getElementById(
+        "question"
+    ).innerText =
+        question.question;
+
+    let html = "";
+
+    question.options.forEach(option => {
+
+        const checked =
+            answers[currentIndex] === option
+            ? "checked"
+            : "";
+
+        html += `
+            <div class="quiz-option">
+
+                <input
+                    type="radio"
+                    name="answer"
+                    value="${option}"
+                    ${checked}
+                >
+
+                ${option}
+
+            </div>
+        `;
+    });
+
+    document.getElementById(
+        "options"
+    ).innerHTML = html;
+}
+
+function saveAnswer(){
+
+    const selected =
+        document.querySelector(
+            'input[name="answer"]:checked'
+        );
+
+    if(selected){
+
+        answers[currentIndex] =
+            selected.value;
+    }
+}
+
+function nextQuestion(){
+
+    saveAnswer();
+
+    if(currentIndex <
+        questions.length - 1){
+
+        currentIndex++;
+
+        showQuestion();
+    }
+}
+
+function previousQuestion(){
+
+    saveAnswer();
+
+    if(currentIndex > 0){
+
+        currentIndex--;
+
+        showQuestion();
+    }
+}
+
+async function submitQuiz(){
+
+    saveAnswer();
+
+    let score = 0;
+
+    questions.forEach((q,index)=>{
+
+        if(
+            answers[index] ===
+            q.correct_answer
+        ){
+            score++;
+        }
+    });
+
+    const student =
+        localStorage.getItem(
+            "studentName"
+        );
+
+    const email =
+        localStorage.getItem(
+            "studentEmail"
+        );
+
+    const response =
+        await fetch(
+        "http://127.0.0.1:8000/save-result",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                    "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    student:student,
+
+                    email:email,
+
+                    quiz:selectedQuiz,
+
+                    score:score,
+
+                    total:
+                    questions.length
+                })
+            }
+        );
+
+    alert(
+        `Quiz Submitted\n\nScore: ${score}/${questions.length}`
+    );
+
+    window.location.href =
+        "student-dashboard.html";
+}
+
+loadQuiz();
+
+</script>
+
+</body>
+</html>

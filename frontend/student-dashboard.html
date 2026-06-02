@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>👨‍🎓 Student Dashboard</h1>
+
+    <h2 id="welcome"></h2>
+
+    <div id="quizList"></div>
+
+    <br>
+
+    <button onclick="window.location.href='my-results.html'">
+        📊 My Results
+    </button>
+
+    <br><br>
+
+    <button onclick="logout()">
+        🚪 Logout
+    </button>
+
+</div>
+
+<script>
+
+const studentName =
+    localStorage.getItem("studentName");
+
+document.getElementById("welcome")
+    .innerText =
+    "Welcome, " + studentName;
+
+async function loadQuizzes(){
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/quizzes"
+        );
+
+    const quizzes =
+        await response.json();
+
+    let html = "";
+
+    quizzes.forEach(quiz => {
+
+        html += `
+            <div class="card">
+
+                <h3>${quiz.title}</h3>
+
+                <p>${quiz.description}</p>
+
+                <p>
+                    Total Marks:
+                    ${quiz.total_marks}
+                </p>
+
+                <button
+                onclick="attemptQuiz('${quiz.title}')">
+
+                    Attempt Quiz
+
+                </button>
+
+            </div>
+        `;
+    });
+
+    document.getElementById(
+        "quizList"
+    ).innerHTML = html;
+}
+
+async function attemptQuiz(title){
+
+    const email =
+        localStorage.getItem(
+            "studentEmail"
+        );
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/check-attempt/" +
+            encodeURIComponent(email) +
+            "/" +
+            encodeURIComponent(title)
+        );
+
+    const data =
+        await response.json();
+
+    if(data.attempted){
+
+        alert(
+            "You have already attempted this quiz."
+        );
+
+        return;
+    }
+
+    localStorage.setItem(
+        "selectedQuiz",
+        title
+    );
+
+    window.location.href =
+        "attempt-quiz.html";
+}
+
+function logout(){
+
+    localStorage.removeItem(
+        "studentName"
+    );
+
+    localStorage.removeItem(
+        "studentEmail"
+    );
+
+    window.location.href =
+        "index.html";
+}
+
+loadQuizzes();
+
+</script>
+
+</body>
+</html>

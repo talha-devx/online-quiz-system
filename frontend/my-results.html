@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Results</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📊 My Results</h1>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Quiz</th>
+                <th>Score</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+
+        <tbody id="resultsTable"></tbody>
+
+    </table>
+
+    <br>
+
+    <button
+    onclick="window.location.href='student-dashboard.html'">
+        ← Back
+    </button>
+
+</div>
+
+<script>
+
+async function loadResults(){
+
+    const email =
+        localStorage.getItem(
+            "studentEmail"
+        );
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/my-results/" +
+            email
+        );
+
+    const results =
+        await response.json();
+
+    let html = "";
+
+    results.forEach(result => {
+
+        html += `
+            <tr>
+
+                <td>${result.quiz}</td>
+
+                <td>${result.score}</td>
+
+                <td>${result.total}</td>
+
+            </tr>
+        `;
+    });
+
+    document.getElementById(
+        "resultsTable"
+    ).innerHTML = html;
+}
+
+loadResults();
+
+</script>
+
+</body>
+</html>

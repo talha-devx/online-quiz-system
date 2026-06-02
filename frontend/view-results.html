@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Results</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📊 Student Results</h1>
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>Student</th>
+                <th>Quiz</th>
+                <th>Score</th>
+                <th>Total</th>
+            </tr>
+
+        </thead>
+
+        <tbody id="resultsTable"></tbody>
+
+    </table>
+
+    <br>
+
+    <button
+        onclick="window.location.href='teacher-dashboard.html'">
+        ← Back To Dashboard
+    </button>
+
+</div>
+
+<script>
+
+async function loadResults(){
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/results"
+        );
+
+    const data =
+        await response.json();
+
+    let rows = "";
+
+    data.forEach(result => {
+
+        rows += `
+            <tr>
+                <td>${result.student}</td>
+                <td>${result.quiz}</td>
+                <td>${result.score}</td>
+                <td>${result.total}</td>
+            </tr>
+        `;
+    });
+
+    document.getElementById(
+        "resultsTable"
+    ).innerHTML = rows;
+}
+
+loadResults();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Teacher Login</h1>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Enter Email"
+    >
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Enter Password"
+    >
+
+    <button onclick="loginTeacher()">
+        Login
+    </button>
+
+    <p id="message"></p>
+
+    <br>
+
+    <a href="index.html">
+        ← Back
+    </a>
+
+</div>
+
+<script>
+
+async function loginTeacher(){
+
+    const email =
+        document.getElementById("email").value;
+
+    const password =
+        document.getElementById("password").value;
+
+    const response = await fetch(
+        "http://127.0.0.1:8000/teacher-login",
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                email:email,
+                password:password
+            })
+        }
+    );
+
+    const data = await response.json();
+
+    document.getElementById("message")
+        .innerText = data.message;
+
+    if(data.message === "Login successful"){
+
+        localStorage.setItem(
+            "teacherName",
+            data.name
+        );
+
+        setTimeout(()=>{
+            window.location.href =
+                "teacher-dashboard.html";
+        },1000);
+    }
+}
+
+</script>
+
+</body>
+</html>

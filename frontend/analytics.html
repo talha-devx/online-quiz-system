@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Analytics</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📊 Quiz Analytics</h1>
+
+    <div class="card">
+        <h3>Total Students</h3>
+        <p id="students"></p>
+    </div>
+
+    <div class="card">
+        <h3>Total Quizzes</h3>
+        <p id="quizzes"></p>
+    </div>
+
+    <div class="card">
+        <h3>Total Attempts</h3>
+        <p id="attempts"></p>
+    </div>
+
+    <div class="card">
+        <h3>🏆 Top Student</h3>
+        <p id="topStudent"></p>
+    </div>
+
+    <div id="quizStats"></div>
+
+    <br>
+
+    <button onclick="window.location.href='teacher-dashboard.html'">
+        ← Back To Dashboard
+    </button>
+
+</div>
+
+<script>
+
+async function loadAnalytics(){
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/analytics"
+        );
+
+    const data =
+        await response.json();
+
+    document.getElementById(
+        "students"
+    ).innerText = data.students;
+
+    document.getElementById(
+        "quizzes"
+    ).innerText = data.quizzes;
+
+    document.getElementById(
+        "attempts"
+    ).innerText = data.attempts;
+
+    if(data.top_student){
+
+        document.getElementById(
+            "topStudent"
+        ).innerText =
+            `${data.top_student.name}
+             (${data.top_student.percentage}%)`;
+    }
+
+    let html = "";
+
+    data.quiz_stats.forEach(stat => {
+
+        html += `
+        <div class="card">
+
+            <h3>📚 ${stat.quiz}</h3>
+
+            <p>
+                Attempts:
+                ${stat.attempts}
+            </p>
+
+            <p>
+                Average Score:
+                ${stat.average_score}
+            </p>
+
+        </div>
+        `;
+    });
+
+    document.getElementById(
+        "quizStats"
+    ).innerHTML = html;
+}
+
+loadAnalytics();
+
+</script>
+
+</body>
+</html>

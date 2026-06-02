@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🔑 Student Login</h1>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Email Address">
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password">
+
+    <button onclick="loginStudent()">
+        Login
+    </button>
+
+    <p id="message"></p>
+
+    <br>
+
+    <a href="student-register.html">
+        Don't have an account? Register
+    </a>
+
+</div>
+
+<script>
+
+async function loginStudent(){
+
+    const email =
+        document.getElementById("email").value;
+
+    const password =
+        document.getElementById("password").value;
+
+    const response = await fetch(
+        "http://127.0.0.1:8000/student-login",
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                email:email,
+                password:password
+            })
+        }
+    );
+
+    const data =
+        await response.json();
+
+    document.getElementById("message")
+        .innerText = data.message;
+
+    if(data.message === "Login successful"){
+
+        localStorage.setItem(
+            "studentName",
+            data.name
+        );
+
+        localStorage.setItem(
+            "studentEmail",
+            data.email
+        );
+
+        setTimeout(()=>{
+
+            window.location.href =
+                "student-dashboard.html";
+
+        },1000);
+    }
+}
+
+</script>
+
+</body>
+</html>

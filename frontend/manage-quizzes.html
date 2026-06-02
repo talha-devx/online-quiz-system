@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Quizzes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📚 Manage Quizzes</h1>
+
+    <div id="quizList"></div>
+
+    <br>
+
+    <button onclick="window.location.href='teacher-dashboard.html'">
+        ← Back To Dashboard
+    </button>
+
+</div>
+
+<script>
+
+async function loadQuizzes(){
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/quizzes"
+        );
+
+    const quizzes =
+        await response.json();
+
+    let html = "";
+
+    quizzes.forEach(quiz => {
+
+        html += `
+            <div class="card">
+
+                <h3>${quiz.title}</h3>
+
+                <p>${quiz.description}</p>
+
+                <p>Total Marks: ${quiz.total_marks}</p>
+
+                <br>
+
+                <button
+                onclick="deleteQuiz('${quiz.title}')">
+                    🗑 Delete Quiz
+                </button>
+
+            </div>
+        `;
+    });
+
+    document.getElementById(
+        "quizList"
+    ).innerHTML = html;
+}
+
+async function deleteQuiz(title){
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this quiz?"
+        );
+
+    if(!confirmDelete) return;
+
+    const response =
+        await fetch(
+            "http://127.0.0.1:8000/delete-quiz/" + title,
+            {
+                method:"DELETE"
+            }
+        );
+
+    const data =
+        await response.json();
+
+    alert(data.message);
+
+    loadQuizzes();
+}
+
+loadQuizzes();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📝 Student Registration</h1>
+
+    <input
+        type="text"
+        id="name"
+        placeholder="Full Name">
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Email Address">
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password">
+
+    <input
+        type="password"
+        id="confirmPassword"
+        placeholder="Confirm Password">
+
+    <button onclick="registerStudent()">
+        Register
+    </button>
+
+    <p id="message"></p>
+
+    <br>
+
+    <a href="student-login.html">
+        Already have an account? Login
+    </a>
+
+</div>
+
+<script>
+
+async function registerStudent(){
+
+    const name =
+        document.getElementById("name").value;
+
+    const email =
+        document.getElementById("email").value;
+
+    const password =
+        document.getElementById("password").value;
+
+    const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+    if(password !== confirmPassword){
+
+        document.getElementById("message")
+            .innerText =
+            "Passwords do not match";
+
+        return;
+    }
+
+    const response = await fetch(
+        "http://127.0.0.1:8000/register",
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                name:name,
+                email:email,
+                password:password
+            })
+        }
+    );
+
+    const data =
+        await response.json();
+
+    document.getElementById("message")
+        .innerText = data.message;
+
+    if(
+        data.message ===
+        "Student registered successfully"
+    ){
+
+        setTimeout(()=>{
+            window.location.href =
+                "student-login.html";
+        },1500);
+    }
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Quiz System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🎓 Online Quiz System</h1>
+
+        <p style="margin-bottom:25px;">
+            Select your role to continue
+        </p>
+
+        <div class="role-buttons">
+
+            <button onclick="goTeacher()">
+                 I Am A Teacher
+            </button>
+
+            <button onclick="goStudent()">
+                I Am A Student
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function goTeacher(){
+            window.location.href =
+                "teacher-login.html";
+        }
+
+        function goStudent(){
+            window.location.href =
+                "student-portal.html";
+        }
+
+    </script>
+
+</body>
+</html>
